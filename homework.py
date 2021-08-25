@@ -3,7 +3,7 @@ date_format = '%d.%m.%Y'
 
 
 class Record:
- 
+
     def __init__(self, amount, comment, date = None):
         self.amount = amount
         self.comment = comment
@@ -69,13 +69,13 @@ class CashCalculator(Calculator):
         if remain > 0:
             return f'На сегодня осталось {difference} {coin}'
         else:
-            difference = abs(difference)
+            difference = abs(difference)#возвращает абсолютное значение числа
             return f'Денег нет, держись: твой долг - {difference} {coin}'
 
 
 class CaloriesCalculator(Calculator):
-    
-    def get_calories_remained(self): 
+
+    def get_calories_remained(self):
         balance = self.remainder()
         if balance > 0:
             return (
@@ -84,16 +84,3 @@ class CaloriesCalculator(Calculator):
             )
         else:
             return 'Хватит есть!'
-
-r1 = Record(amount=145, comment='Безудержный шопинг', date='08.03.2019')
-r2 = Record(amount=1568,
-            comment='Наполнение потребительской корзины',
-            date='09.03.2019')
-r3 = Record(amount=691, comment='Катание на такси', date='08.03.2019')
-
-# для CaloriesCalculator
-r4 = Record(amount=1186,
-            comment='Кусок тортика. И ещё один.',
-            date='24.02.2019')
-r5 = Record(amount=84, comment='Йогурт.', date='23.02.2019')
-r6 = Record(amount=1140, comment='Баночка чипсов.', date='24.02.2019') 
