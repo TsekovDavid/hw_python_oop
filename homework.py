@@ -1,6 +1,7 @@
 import datetime as dt
 date_format = '%d.%m.%Y'
 
+
 class Record:
 
     def __init__(self, amount, comment, date = None):
@@ -11,6 +12,7 @@ class Record:
             self.date = dt.date.today()
         else:
             self.date = dt.datetime.strptime(date, date_format).date()
+
 
 class Calculator:
 
@@ -42,6 +44,7 @@ class Calculator:
         balance: float = self.limit - self.get_today_stats()
         return balance
 
+
 class CashCalculator(Calculator):
 
     USD_RATE: float = 74.00
@@ -66,14 +69,15 @@ class CashCalculator(Calculator):
             difference = abs(difference)
             return f'Денег нет, держись: твой долг - {difference} {coin}'
 
+
 class CaloriesCalculator(Calculator):
 
     def get_calories_remained(self):
         balance = self.remainder()
         if balance > 0:
             return (
-                'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью '
-                f'не более {balance} кКал'
+                'Сегодня можно съесть что-нибудь ещё, '
+                f'но с общей калорийностью не более {balance} кКал'
             )
         else:
             return 'Хватит есть!'
