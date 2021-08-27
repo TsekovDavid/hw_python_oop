@@ -4,7 +4,7 @@ date_format = '%d.%m.%Y'
 
 class Record:
 
-    def __init__(self, amount, comment, date = None):
+    def __init__(self, amount, comment, date=None):
         self.amount = amount
         self.comment = comment
 
@@ -59,7 +59,7 @@ class CashCalculator(Calculator):
             'usd': (self.USD_RATE, 'USD'),
             'eur': (self.EURO_RATE, 'Euro'),
             'rub': (self.RUB_RATE, 'руб')
-            }
+        }
         cost, coin = exchange_rate[currency]
         difference = round(remain / cost, 2)
 
