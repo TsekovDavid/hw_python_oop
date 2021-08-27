@@ -1,7 +1,6 @@
 import datetime as dt
 date_format = '%d.%m.%Y'
 
-
 class Record:
 
     def __init__(self, amount, comment, date = None):
@@ -13,7 +12,6 @@ class Record:
         else:
             self.date = dt.datetime.strptime(date, date_format).date()
 
-
 class Calculator:
 
     def __init__(self, limit: int) -> None:
@@ -22,9 +20,6 @@ class Calculator:
 
     def add_record(self, record: Record):
         self.records.append(record)
-        """Создает список из поступающих объктов класса Record 
-        и записывает в список в records.
-        """
 
     def get_week_stats(self):
         today = dt.date.today()
@@ -47,7 +42,6 @@ class Calculator:
         balance: float = self.limit - self.get_today_stats()
         return balance
 
-
 class CashCalculator(Calculator):
 
     USD_RATE: float = 74.00
@@ -55,7 +49,7 @@ class CashCalculator(Calculator):
     RUB_RATE: float = 1.00
 
     def get_today_cash_remained(self, currency):
-        remain = self.remainder()#лимит минус количество трат за сегодня
+        remain = self.remainder()
         if remain == 0:
             return 'Денег нет, держись'
         exchange_rate = {
@@ -64,14 +58,13 @@ class CashCalculator(Calculator):
             'rub': (self.RUB_RATE, 'руб')
             }
         cost, coin = exchange_rate[currency]
-        difference = round(remain / cost, 2)#limit минус количество за сегодня, деленное на курс
+        difference = round(remain / cost, 2)
 
         if remain > 0:
             return f'На сегодня осталось {difference} {coin}'
         else:
-            difference = abs(difference)#возвращает абсолютное значение числа
+            difference = abs(difference)
             return f'Денег нет, держись: твой долг - {difference} {coin}'
-
 
 class CaloriesCalculator(Calculator):
 
