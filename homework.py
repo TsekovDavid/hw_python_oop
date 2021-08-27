@@ -3,7 +3,6 @@ date_format = '%d.%m.%Y'
 
 
 class Record:
-
     def __init__(self, amount, comment, date = None):
         self.amount = amount
         self.comment = comment
@@ -15,16 +14,12 @@ class Record:
 
 
 class Calculator:
-
     def __init__(self, limit: int) -> None:
         self.limit = limit
         self.records: float = []
 
     def add_record(self, record: Record):
         self.records.append(record)
-        """Создает список из поступающих объктов класса Record 
-        и записывает в список в records.
-        """
 
     def get_week_stats(self):
         today = dt.date.today()
@@ -44,43 +39,35 @@ class Calculator:
         return total_stats
 
     def remainder(self):
-        balance: float = self.limit - self.get_today_stats()
+        balance = self.limit - self.get_today_stats()
         return balance
 
 
 class CashCalculator(Calculator):
-
     USD_RATE: float = 74.00
     EURO_RATE: float = 86.00
     RUB_RATE: float = 1.00
 
-    def get_today_cash_remained(self, currency):
-        remain = self.remainder()#лимит минус количество трат за сегодня
-        if remain == 0:
-            return 'Денег нет, держись'
+    def get_today_cash_remained(self, currency = 'rub'):
         exchange_rate = {
             'usd': (self.USD_RATE, 'USD'),
             'eur': (self.EURO_RATE, 'Euro'),
             'rub': (self.RUB_RATE, 'руб')
             }
         cost, coin = exchange_rate[currency]
-        difference = round(remain / cost, 2)#limit минус количество за сегодня, деленное на курс
-
-        if remain > 0:
+        difference = round(self.remainder() / cost, 2)
+        if self.limit >= difference:
             return f'На сегодня осталось {difference} {coin}'
+        elif difference == 0:
+            return 'Денег нет, держись'
         else:
-            difference = abs(difference)#возвращает абсолютное значение числа
             return f'Денег нет, держись: твой долг - {difference} {coin}'
 
 
 class CaloriesCalculator(Calculator):
-
-    def get_calories_remained(self):
+    def get_calories_remained(self): 
         balance = self.remainder()
         if balance > 0:
-            return (
-                'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью '
-                f'не более {balance} кКал'
-            )
-        else:
-            return 'Хватит есть!'
+            return 'Сегодня можно съесть что-нибудь ещё, '
+            f'но с общей калорийностью не более {balance} кКал'
+        return 'Хватит есть!'
