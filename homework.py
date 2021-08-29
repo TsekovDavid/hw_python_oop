@@ -26,18 +26,20 @@ class Calculator:
     def get_week_stats(self):
         today = dt.date.today()
         last_week = today - dt.timedelta(days=7)
-        total_stats = 0
-        for i in self.records:
-            if last_week <= i.date <= today:
-                total_stats += i.amount
+        total_stats = sum(
+            [
+                i.amount for i in self.records if last_week <= i.date <= today
+            ]
+        )
         return total_stats
 
     def get_today_stats(self):
         today = dt.date.today()
-        total_stats = 0
-        for i in self.records:
-            if i.date == today:
-                total_stats += i.amount
+        total_stats = sum(
+            [
+                i.amount for i in self.records if i.date == today
+            ]
+        )
         return total_stats
 
     def remainder(self):
@@ -53,13 +55,15 @@ class CashCalculator(Calculator):
 
     def get_today_cash_remained(self, currency):
         remain = self.remainder()
-        if remain == 0:
-            return 'Денег нет, держись'
         exchange_rate = {
             'usd': (self.USD_RATE, 'USD'),
             'eur': (self.EURO_RATE, 'Euro'),
             'rub': (self.RUB_RATE, 'руб')
         }
+        if currency not in exchange_rate:
+            return 'не корректное значение'
+        if remain == 0:
+            return 'Денег нет, держись'
         cost, coin = exchange_rate[currency]
         difference = round(remain / cost, 2)
 
@@ -81,3 +85,8 @@ class CaloriesCalculator(Calculator):
             )
         else:
             return 'Хватит есть!'
+
+#tests
+b=CashCalculator(300)
+c=b.get_today_cash_remained('rub')
+print(c)
