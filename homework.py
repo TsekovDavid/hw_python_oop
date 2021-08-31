@@ -25,7 +25,8 @@ class Calculator:
         self.records.append(record)
 
     def get_week_stats(self):
-        last_week = self.TODAY - dt.timedelta(days=7)#не получается изменить на 6, тест ломается
+        last_week = self.TODAY - dt.timedelta(days=7)
+        # не получается изменить на 6, тест ломается
         return sum(
             [
                 record.amount for record in self.records
