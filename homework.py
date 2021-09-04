@@ -8,14 +8,15 @@ class Record:
         self.amount = amount
         self.comment = comment
         if date is None:
-            self.date = dt.date.today()
+            self.date = dt.datetime.now().date()
         else:
             self.date = dt.datetime.strptime(date, DATE_FORMAT).date()
 
 
 class Calculator:
 
-    TODAY = dt.date.today()
+    TODAY = dt.datetime.now().date()
+    last_week = TODAY - dt.timedelta(days=7)
 
     def __init__(self, limit) -> None:
         self.limit = limit
@@ -25,21 +26,15 @@ class Calculator:
         self.records.append(record)
 
     def get_week_stats(self):
-        last_week = self.TODAY - dt.timedelta(days=7)
-        # не получается изменить на 6, тест ломается
         return sum(
-            [
-                record.amount for record in self.records
-                if last_week <= record.date <= self.TODAY
-            ]
+            record.amount for record in self.records
+            if self.last_week < record.date <= self.TODAY
         )
 
     def get_today_stats(self):
         return sum(
-            [
-                record.amount for record in self.records
-                if record.date == self.TODAY
-            ]
+            record.amount for record in self.records
+            if record.date == self.TODAY
         )
 
     def balance_for_today(self):
@@ -57,36 +52,35 @@ class CashCalculator(Calculator):
         'rub': (RUB_RATE, 'руб')
     }
     BANKRUPT = 'Денег нет, держись'
-    ERROR = 'не корректное значение'
-    CASH_BALANCE = 'На сегодня осталось {key_difference} {key_coin}'
-    DEBT = 'Денег нет, держись: твой долг - {key_difference} {key_coin}'
+    CASH_BALANCE = 'На сегодня осталось {difference} {coin}'
+    DEBT = 'Денег нет, держись: твой долг - {difference} {coin}'
 
     def get_today_cash_remained(self, currency):
-        remain = self.balance_for_today()
         if currency not in self.EXCHANGE_RATE:
-            return self.ERROR
+            raise KeyError(f'валюта {currency} не поддерживается')
+        remain = self.balance_for_today()
         if remain == 0:
             return self.BANKRUPT
         cost, coin = self.EXCHANGE_RATE[currency]
         difference = round(remain / cost, 2)
         if remain > 0:
-            return self.CASH_BALANCE.format(key_difference=difference,
-                                            key_coin=coin)
+            return self.CASH_BALANCE.format(difference=difference,
+                                            coin=coin)
         difference = abs(difference)
-        return self.DEBT.format(key_difference=difference,
-                                key_coin=coin)
+        return self.DEBT.format(difference=difference,
+                                coin=coin)
 
 
 class CaloriesCalculator(Calculator):
 
     REMAINING_CALORIES = (
         'Сегодня можно съесть что-нибудь ещё,'
-        ' но с общей калорийностью не более {key_balance} кКал'
+        ' но с общей калорийностью не более {balance} кКал'
     )
     STOP = 'Хватит есть!'
 
     def get_calories_remained(self):
         balance = self.balance_for_today()
         if balance > 0:
-            return self.REMAINING_CALORIES.format(key_balance=balance)
+            return self.REMAINING_CALORIES.format(balance=balance)
         return self.STOP
