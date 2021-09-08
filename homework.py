@@ -15,9 +15,6 @@ class Record:
 
 class Calculator:
 
-    TODAY = dt.datetime.now().date()
-    last_week = TODAY - dt.timedelta(days=7)
-
     def __init__(self, limit) -> None:
         self.limit = limit
         self.records = []
@@ -26,18 +23,19 @@ class Calculator:
         self.records.append(record)
 
     def get_week_stats(self):
+        last_week = dt.date.today() - dt.timedelta(days=7)
         return sum(
             record.amount for record in self.records
-            if self.last_week < record.date <= self.TODAY
+            if last_week < record.date <= dt.date.today()
         )
 
     def get_today_stats(self):
         return sum(
             record.amount for record in self.records
-            if record.date == self.TODAY
+            if record.date == dt.date.today()
         )
 
-    def balance_for_today(self):
+    def get_today_balance(self):
         return self.limit - self.get_today_stats()
 
 
@@ -58,7 +56,7 @@ class CashCalculator(Calculator):
     def get_today_cash_remained(self, currency):
         if currency not in self.EXCHANGE_RATE:
             raise KeyError(f'валюта {currency} не поддерживается')
-        remain = self.balance_for_today()
+        remain = self.get_today_balance()
         if remain == 0:
             return self.BANKRUPT
         cost, coin = self.EXCHANGE_RATE[currency]
@@ -80,7 +78,7 @@ class CaloriesCalculator(Calculator):
     STOP = 'Хватит есть!'
 
     def get_calories_remained(self):
-        balance = self.balance_for_today()
+        balance = self.get_today_balance()
         if balance > 0:
             return self.REMAINING_CALORIES.format(balance=balance)
         return self.STOP
