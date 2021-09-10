@@ -24,15 +24,17 @@ class Calculator:
 
     def get_week_stats(self):
         last_week = dt.date.today() - dt.timedelta(days=7)
+        today = dt.date.today()
         return sum(
             record.amount for record in self.records
-            if last_week < record.date <= dt.date.today()
+            if last_week < record.date <= today
         )
 
     def get_today_stats(self):
+        today = dt.date.today()
         return sum(
             record.amount for record in self.records
-            if record.date == dt.date.today()
+            if record.date == today
         )
 
     def get_today_balance(self):
